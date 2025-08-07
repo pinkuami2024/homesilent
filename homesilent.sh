@@ -6,7 +6,7 @@ SOURCE_DIR="$HOME"
 EXTENSIONS=( "rs" "py" "env" "sh" "toml" "json" "onnx" "txt" )
 
 # ✅ Find the correct device path using label
-DEVICE_PATH=$(lsblk -l -o NAME,LABEL | grep -iw "$USB_LABEL" | awk '{print "/dev/" $1}' | head -n 1)
+DEVICE_PATH=$(lsblk -lp -o NAME,LABEL | grep -iw "$USB_LABEL" | awk '{print "/dev/" $1}' | head -n 1)
 
 if [ -z "$DEVICE_PATH" ]; then
     # echo "❌ USB device with label '$USB_LABEL' not found!"
