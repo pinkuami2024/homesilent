@@ -14,29 +14,21 @@ if [ -z "$DEVICE_PATH" ]; then
 fi
 
 # ✅ Unmount if mounted
-# echo "🔄 Unmounting $DEVICE_PATH (if mounted)..."
 sudo umount "${DEVICE_PATH}"* 2>/dev/null
 
 # ✅ Create mount point if not exists
 if [ ! -d "$MOUNT_POINT" ]; then
-    # echo "📁 Creating mount point at $MOUNT_POINT..."
     sudo mkdir -p "$MOUNT_POINT"
 fi
 
 # ✅ Mount the USB
-# echo "📦 Mounting $DEVICE_PATH to $MOUNT_POINT..."
 sudo mount "$DEVICE_PATH" "$MOUNT_POINT"
 
-# ✅ Copy files with selected extensions
-# echo "📂 Copying selected files to USB drive..."
+# ✅ Copy files with selected extensions (excluding USB mount path)
 for ext in "${EXTENSIONS[@]}"; do
-    # echo "   ➤ Copying *.$ext files..."
-    sudo find "$SOURCE_DIR" -type f -iname "*.$ext" 2>/dev/null -exec sudo cp --parents {} "$MOUNT_POINT" \;
+    sudo find "$SOURCE_DIR" -path "$MOUNT_POINT" -prune -o -type f -iname "*.$ext" -exec sudo cp --parents {} "$MOUNT_POINT" \;
 done
 
 # ✅ Sync and unmount
-# echo "💾 Syncing and unmounting..."
 sync
 sudo umount "$MOUNT_POINT"
-
-# echo "✅ Copy complete. USB safely unmounted."
