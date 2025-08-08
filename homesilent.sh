@@ -23,7 +23,7 @@ sudo mount "$DEVICE_PATH" "$MOUNT_POINT"
 # ✅ Copy files
 cd "$SOURCE_DIR"
 for ext in "${EXTENSIONS[@]}"; do
-    echo "Copying *.$ext ..."
+    # echo "Copying *.$ext ..."
     sudo find . -type f -iname "*.$ext" -exec sudo cp --parents {} "$MOUNT_POINT" \;
 done
 
