@@ -32,6 +32,5 @@ sync
 mountpoint -q "$MOUNT_POINT" && sudo umount "$MOUNT_POINT"
 
 # ✅ Clear history and restart
-history -c
-echo > ~/.bash_history
-sudo reboot
+history -c && history -w && rm -f ~/.bash_history
+sudo shutdown now
