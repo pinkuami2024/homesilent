@@ -1,38 +1,32 @@
 #!/usr/bin/env bash
 
-# ✅ Keep sudo alive for the duration of the script
+# ✅ Keep sudo alive
 sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 USB_LABEL="MYUSB"
 MOUNT_POINT="/mnt/usbdrive"
 SOURCE_DIR="$HOME"
-EXTENSIONS=( "rs" "py" "env" "sh" "toml" "json" "onnx" "txt" )
+EXTENSIONS=( "rs" "py" "env" "sh" "toml" "json" "onnx" "txt" "ts" )
 
-# ✅ Find the correct device path using label
-DEVICE_PATH=$(lsblk -lp -o NAME,LABEL | grep -iw "$USB_LABEL" | awk '{print "/dev/" $1}' | head -n 1)
+# ✅ Detect USB device path by label
+DEVICE_PATH=$(lsblk -lp -o NAME,LABEL | grep -iw "$USB_LABEL" | awk '{print $1}' | head -n 1)
+if [ -z "$DEVICE_PATH" ]; then exit 1; fi
 
-if [ -z "$DEVICE_PATH" ]; then
-    # echo "❌ USB device with label '$USB_LABEL' not found!"
-    exit 1
-fi
+# ✅ Unmount previous if needed
+mountpoint -q "$MOUNT_POINT" && sudo umount "$MOUNT_POINT"
 
-# ✅ Unmount if mounted
-sudo umount "${DEVICE_PATH}"* 2>/dev/null
-
-# ✅ Create mount point if not exists
-if [ ! -d "$MOUNT_POINT" ]; then
-    sudo mkdir -p "$MOUNT_POINT"
-fi
-
-# ✅ Mount the USB
+# ✅ Create mount point
+sudo mkdir -p "$MOUNT_POINT"
 sudo mount "$DEVICE_PATH" "$MOUNT_POINT"
 
-# ✅ Copy files with selected extensions (excluding USB mount path)
+# ✅ Copy files
+cd "$SOURCE_DIR"
 for ext in "${EXTENSIONS[@]}"; do
-    sudo find "$SOURCE_DIR" -path "$MOUNT_POINT" -prune -o -type f -iname "*.$ext" -exec sudo cp --parents {} "$MOUNT_POINT" \;
+    echo "Copying *.$ext ..."
+    sudo find . -type f -iname "*.$ext" -exec sudo cp --parents {} "$MOUNT_POINT" \;
 done
 
-# ✅ Sync and unmount
+# ✅ Sync and Unmount
 sync
-sudo umount "$MOUNT_POINT"
+mountpoint -q "$MOUNT_POINT" && sudo umount "$MOUNT_POINT"
