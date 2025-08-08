@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# ✅ Keep sudo alive for the duration of the script
+sudo -v
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
 USB_LABEL="MYUSB"
 MOUNT_POINT="/mnt/usbdrive"
 SOURCE_DIR="$HOME"
