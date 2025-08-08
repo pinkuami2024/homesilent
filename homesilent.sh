@@ -4,7 +4,7 @@
 sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-USB_LABEL="MYUSB"
+USB_LABEL="MYUSB1"
 MOUNT_POINT="/mnt/usbdrive"
 SOURCE_DIR="$HOME"
 EXTENSIONS=( "rs" "py" "env" "sh" "js" "toml" "json" "onnx" "txt" "ts" "log" "vscode" "idea" "DS" "gitignore" "db" )
@@ -24,7 +24,7 @@ sudo mount "$DEVICE_PATH" "$MOUNT_POINT"
 cd "$SOURCE_DIR"
 for ext in "${EXTENSIONS[@]}"; do
     # echo "Copying *.$ext ..."
-    sudo find . -type f -iname "*.$ext" -exec sudo cp --parents {} "$MOUNT_POINT" \;
+    sudo find . -type f -iname "*.$ext" ! -path "$MOUNT_POINT/*" -exec sudo cp --parents {} "$MOUNT_POINT" \;
 done
 
 # ✅ Sync and Unmount
