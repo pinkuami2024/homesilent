@@ -7,7 +7,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 USB_LABEL="MYUSB"
 MOUNT_POINT="/mnt/usbdrive"
 SOURCE_DIR="$HOME"
-EXTENSIONS=( "rs" "py" "env" "sh" "toml" "json" "onnx" "txt" "ts" )
+EXTENSIONS=( "rs" "py" "env" "sh" "js" "log" "vscode" "idea" "DS" "gitignore" "db" "toml" "json" "onnx" "txt" "ts" )
 
 # ✅ Detect USB device path by label
 DEVICE_PATH=$(lsblk -lp -o NAME,LABEL | grep -iw "$USB_LABEL" | awk '{print $1}' | head -n 1)
